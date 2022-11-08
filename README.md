@@ -1,17 +1,15 @@
 # DataEngProject
 Subject : Hackaton (2018)
 
-Présentation du sujet
-Dans le cadre de ce projet, nous avons récupéré des datasets concernant les différents hackatons qui ont eu lieu aux Etats-Unis en 2018, fournis par XX. Nous utiliserons 3 datasets contenant les informations sur : les participants, les projets, et sur le hackaton en lui-même. Avec les éléments récupérés nous essaierons de répondre aux deux questions suivantes sous un format user-friendly :
-                - Quel est le hackaton dont la moyenne des skills des participants est la plus élevée ?
-                - Le top 10 des états où il y a eu le plus de participants à un hackaton 
+Presentation of the subject
+For this project, we have retrieved datasets about the hackatons that took place in the US in may 2018, provided by Prof Alex Nolte. We will use 3 datasets containing information about: the participants, the projects, and about the hackaton itself. With the recovered elements we will try to answer the following two questions in a user-friendly format:
+                - Which hackaton has the highest average skill level of the participants?
+                - Which are the top 10 states (in order) with the most participants in hackatons? 
 
 
-1. Sélection et nettoyage des données avec MongoDB (ingeston data)
-        (A remplir)
+1. Data selection and cleaning with MongoDB (ingeston data)
+        (To be completed)
 2. Staging area 
-        (A remplir)
+        (To be completed)
 3. Production Data and answer to the questions
-        (A remplir)
-
-
+        (To be completed)
