@@ -1,18 +1,18 @@
 import airflow
 import datetime
+import dropbox
 import urllib.request as request
 import pandas as pd
+import requests
+import random
+import json
+import glob
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
-import requests
-import random
-import json
-import glob
-import pandas as pd
-import dropbox
+
 
 default_args_dict = {
     'start_date': datetime.datetime(2020, 6, 25, 0, 0, 0),
