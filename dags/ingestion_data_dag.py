@@ -1,12 +1,14 @@
 import airflow
 import datetime
-import dropbox
 import urllib.request as request
 import pandas as pd
 import requests
 import random
 import json
 import glob
+import pathlib
+import dropbox
+from dropbox.exceptions import AuthError
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
