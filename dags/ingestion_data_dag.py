@@ -38,7 +38,7 @@ def _get_urls(dropbox_token, dropbox_link, destination_folder):
 
     for entry in entries:
         file_path = '/'+entry.name
-        download_destination_path = destination_folder
+        download_destination_path = destination_folder + file_path
         res = dbx.sharing_get_shared_link_file_to_file(download_destination_path, dropbox_link, path=file_path).url
 
 download_hackatons_node = PythonOperator(
