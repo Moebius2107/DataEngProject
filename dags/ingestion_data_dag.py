@@ -6,9 +6,6 @@ import requests
 import random
 import json
 import glob
-import pathlib
-import dropbox
-from dropbox.exceptions import AuthError
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
@@ -33,6 +30,7 @@ ingestion_data_dag = DAG(
 
 
 def _get_urls(dropbox_token, dropbox_link, destination_folder):
+    import dropbox
     dbx = dropbox.Dropbox("sl.BTRxFPLrf6cuzF-WgIaNgg0aB-VPj10jvMTMXEg3j1G4NI4NN3QHBVIBlBY32nzNeLxJ09pImlST64c2Eo_EMFWgsiM2hPTLMUr7D0OOl7EGt5Yr2bcZ1SMuGF67QYAIZDGPltiHTEFV")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
