@@ -2,17 +2,17 @@ import airflow
 import datetime
 import urllib.request as request
 import pandas as pd
-from airflow import DAG
-from airflow.operators.bash_operator import BashOperator
-from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
-from airflow.operators.dummy_operator import DummyOperator
-from airflow.operators.postgres_operator import PostgresOperator
 import requests
 import random
 import json
 import glob
 import pandas as pd
-import dropbox
+from airflow import DAG
+from airflow.operators.bash_operator import BashOperator
+from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
+from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.postgres_operator import PostgresOperator
+
 
 default_args_dict = {
     'start_date': datetime.datetime(2020, 6, 25, 0, 0, 0),
@@ -26,19 +26,20 @@ ingestion_data_dag = DAG(
     dag_id='ingestion_data_dag',
     default_args=default_args_dict,
     catchup=False,
-    template_searchpath=['/usr/local/airflow/data/']
+    template_searchpath=['/opt/airflow/dags/']
 )
 
 
 def _get_urls(dropbox_token, dropbox_link, destination_folder):
-    dbx = dropbox.Dropbox("sl.BTRxFPLrf6cuzF-WgIaNgg0aB-VPj10jvMTMXEg3j1G4NI4NN3QHBVIBlBY32nzNeLxJ09pImlST64c2Eo_EMFWgsiM2hPTLMUr7D0OOl7EGt5Yr2bcZ1SMuGF67QYAIZDGPltiHTEFV")
+    import dropbox
+    dbx = dropbox.Dropbox("sl.BTQpTc2WQbk2oYjhRcXHoBiOwTeRGF0p0ElDXuACDlHJ2zRsAHs7JaGJaKAGgWrrtzzsRTdYdll-HbpaAsU7XxAB2dIvDutKMZQiBZC9nPzui7YioaHIJespSUGfx-MyWxxMNcjBpmtU")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
     entries = dbx.files_list_folder(path="", shared_link=link).entries
 
     for entry in entries:
         file_path = '/'+entry.name
-        download_destination_path = destination_folder
+        download_destination_path = destination_folder + file_path
         res = dbx.sharing_get_shared_link_file_to_file(download_destination_path, dropbox_link, path=file_path).url
 
 download_hackatons_node = PythonOperator(
@@ -49,7 +50,7 @@ download_hackatons_node = PythonOperator(
     op_kwargs={
         "dropbox_token": "",
         "dropbox_link": "https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AACsy_Ll8IgUjXujQSVR4KUIa/hackathons?dl=0&lst=",
-        "destination_folder": "./raw_hackaton_data",
+        "destination_folder": "/opt/airflow/dags/data/raw_hackaton_data",
     },
     depends_on_past=False,
 )
@@ -62,7 +63,7 @@ download_participants_node = PythonOperator(
     op_kwargs={
         "dropbox_token": "",
         "dropbox_link": "https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AACnkkHEropuFClu7XgbhPuja/participants?dl=0&lst=",
-        "destination_folder": "./raw_participant_data",
+        "destination_folder": "/opt/airflow/dags/data/raw_participant_data",
     },
     depends_on_past=False,
 )
@@ -75,7 +76,7 @@ download_projects_node = PythonOperator(
     op_kwargs={
         "dropbox_token": "",
         "dropbox_link": "https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AABMXKB4WetwcT_f1YoNtpbDa/projects?dl=0&lst=",
-        "destination_folder": "./raw_project_data",
+        "destination_folder": "/opt/airflow/dags/data/raw_project_data",
     },
     depends_on_past=False,
 )
