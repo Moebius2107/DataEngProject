@@ -6,7 +6,6 @@ import requests
 import random
 import json
 import glob
-import pandas as pd
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
