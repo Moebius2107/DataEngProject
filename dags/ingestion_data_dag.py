@@ -31,7 +31,7 @@ ingestion_data_dag = DAG(
 
 def _get_urls(dropbox_token, dropbox_link, destination_folder):
     import dropbox
-    dbx = dropbox.Dropbox("sl.BTQpTc2WQbk2oYjhRcXHoBiOwTeRGF0p0ElDXuACDlHJ2zRsAHs7JaGJaKAGgWrrtzzsRTdYdll-HbpaAsU7XxAB2dIvDutKMZQiBZC9nPzui7YioaHIJespSUGfx-MyWxxMNcjBpmtU")
+    dbx = dropbox.Dropbox("sl.BTb4dWA-0hVtIk-dAjRwlEes2HnzHdHin52dkYbnoSAqmTRGpXL7U5ftiOTtaZ0cjchLTJaA2ZwEm47gL9a7G5FI3Zf2oYj6Lc3c8sDtCXyUI7Shmq_1T7WaXm-lRXklkR-nAz8GekJw")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
     entries = dbx.files_list_folder(path="", shared_link=link).entries
