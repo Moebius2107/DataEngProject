@@ -202,5 +202,5 @@ closing_node = DummyOperator(
 )
 
 
-[clean_hackatons, clean_projects, clean_participants] >> dummy_node >> [download_hackatons_node, download_participants_node, download_projects_node] >> dummy_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >> closing_node
+[clean_hackatons, clean_projects, clean_participants] >> dummy_node >> [download_hackatons_node, download_participants_node, download_projects_node] >> dummy_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >> clean_hackatons >> clean_participants >> clean_projects >> closing_node
  

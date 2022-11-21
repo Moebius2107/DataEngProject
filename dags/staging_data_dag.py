@@ -31,10 +31,11 @@ staging_data_dag = DAG(
     template_searchpath=['/opt/airflow/dags/']
 )
 
-def get_mongodb_data(database_name, collection_name):
-    client = MongoClient()
-    db = client.database_name
-    collection = db.collection_name
+def get_mongodb_data(collection_name):
+    warnings.filterwarnings('ignore')
+    myclient = MongoClient("mongodb://mongo:27017/") #Mongo URI format
+    mydb = myclient["customer_db"]
+    collection = mydb.collection_name
     data = pd.DataFrame(list(collection.find()))
 
 
@@ -44,7 +45,6 @@ get_hackaton_data = PythonOperator(
     trigger_rule='none_failed',
     python_callable=get_mongodb_data,
     op_kwargs={
-        "database_name": "mydb",
         "collection_name": "hackatons",
     },
     depends_on_past=False,
@@ -56,7 +56,6 @@ get_participant_data = PythonOperator(
     trigger_rule='none_failed',
     python_callable=get_mongodb_data,
     op_kwargs={
-        "database_name": "mydb",
         "collection_name": "participants",
     },
     depends_on_past=False,
@@ -68,7 +67,6 @@ get_project_data = PythonOperator(
     trigger_rule='none_failed',
     python_callable=get_mongodb_data,
     op_kwargs={
-        "database_name": "mydb",
         "collection_name": "projects",
     },
     depends_on_past=False,
