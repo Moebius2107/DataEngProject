@@ -8,10 +8,7 @@ import json
 import glob
 from pprint import pprint
 import warnings
-from matplotlib import pyplot as plt
-import seaborn as sns
 from pymongo import MongoClient
-from sklearn.preprocessing import StandardScaler
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator

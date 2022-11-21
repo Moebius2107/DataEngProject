@@ -59,7 +59,7 @@ x-airflow-common: &airflow-common
     AIRFLOW_HOME: "/opt/airflow"
     AIRFLOW__CORE_dags_folder: "/opt/airflow/dags"
     AIRFLOW__API__AUTH_BACKEND: "airflow.api.auth.backend.basic_auth"
-    _PIP_ADDITIONAL_REQUIREMENTS: "pip install dropbox, pip install pymongo"
+    _PIP_ADDITIONAL_REQUIREMENTS: "pip install dropbox pip install pymongo"
   volumes:
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
@@ -99,6 +99,16 @@ services:
       timeout: 30s
       retries: 50
     restart: always
+  
+  mongo:
+    image: mongo
+    ports:
+        - 27017:27017
+        - 27018:27018
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: 
+      MONGO_INITDB_ROOT_PASSWORD: 
 
   airflow-webserver:
     <<: *airflow-common

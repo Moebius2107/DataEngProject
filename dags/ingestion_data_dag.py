@@ -30,10 +30,32 @@ ingestion_data_dag = DAG(
     template_searchpath=['/opt/airflow/dags/']
 )
 
+clean_hackatons = BashOperator(
+    task_id = 'clean_hackatons',
+    dag = ingestion_data_dag,
+    trigger_rule='none_failed',
+    bash_command='rm /opt/airflow/dags/data/raw_hackaton_data/*',
+)
+
+
+clean_participants = BashOperator(
+    task_id = 'clean_participants',
+    dag = ingestion_data_dag,
+    trigger_rule='none_failed',
+    bash_command='rm /opt/airflow/dags/data/raw_participant_data/*',
+)
+
+
+clean_projects = BashOperator(
+    task_id = 'clean_projects',
+    dag = ingestion_data_dag,
+    trigger_rule='none_failed',
+    bash_command='rm /opt/airflow/dags/data/raw_project_data/*',
+)
 
 def _get_urls(dropbox_token, dropbox_link, destination_folder):
     import dropbox
-    dbx = dropbox.Dropbox("sl.BTb4dWA-0hVtIk-dAjRwlEes2HnzHdHin52dkYbnoSAqmTRGpXL7U5ftiOTtaZ0cjchLTJaA2ZwEm47gL9a7G5FI3Zf2oYj6Lc3c8sDtCXyUI7Shmq_1T7WaXm-lRXklkR-nAz8GekJw")
+    dbx = dropbox.Dropbox("sl.BThg5FS_elL0xsQVQU2BiH1GMCzVRRMvgd_KaspnXVEqUtVirvOwN2Vsa-kt5tcNWnZXh8OljlOZEWUvLh1WRjr4F1gF6de-OeBcAjPjF_hNzILd7BUAgKCumjQjxyuPHRgi9n1gZ6au")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
     entries = dbx.files_list_folder(path="", shared_link=link).entries
@@ -82,33 +104,21 @@ download_projects_node = PythonOperator(
     depends_on_past=False,
 )
 
-download_projects_node = PythonOperator(
-    task_id='download_project_url_content',
-    dag=ingestion_data_dag,
-    trigger_rule='none_failed',
-    python_callable=_get_urls,
-    op_kwargs={
-        "dropbox_token": "",
-        "dropbox_link": "https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AABMXKB4WetwcT_f1YoNtpbDa/projects?dl=0&lst=",
-        "destination_folder": "/opt/airflow/dags/data/raw_project_data",
-    },
-    depends_on_past=False,
-)
 
-def create_collections():
-    warnings.filterwarnings('ignore')
+# def create_collections():
+#     warnings.filterwarnings('ignore')
 
-    #we use the MongoClient to communicate with the running database instance.
-    myclient = MongoClient("mongodb://mongo:27017/") #Mongo URI format
-    mydb = myclient["customer_db"]
+#     #we use the MongoClient to communicate with the running database instance.
+#     myclient = MongoClient("mongodb://mongo:27017/") #Mongo URI format
+#     mydb = myclient["customer_db"]
 
-    #Or you can use the attribute style 
-    #mydb = myclient.customer_db
+#     #Or you can use the attribute style 
+#     #mydb = myclient.customer_db
 
-    print(mydb.list_collection_names())
-    participants = mydb["participants"]
-    hackatons = mydb["hackatons"]
-    projects = mydb["projects"]
+#     print(mydb.list_collection_names())
+#     participants = mydb["participants"]
+#     hackatons = mydb["hackatons"]
+#     projects = mydb["projects"]
 
 def ingest_collection(destination_collection, path, db):
     import os
@@ -118,24 +128,26 @@ def ingest_collection(destination_collection, path, db):
     
     # iterate over files in
     # that directory
+    warnings.filterwarnings('ignore')
+    myclient = MongoClient("mongodb://mongo:27017/") #Mongo URI format
+    mydb = myclient["customer_db"]
+    collection = mydb[destination_collection]
     for filename in os.listdir(directory):
         f = os.path.join(directory, filename)
         # checking if it is a file
         if os.path.isfile(f):
             with open(directory+'/'+filename) as file:
                 file_data = json.load(file)
-                x = destination_collection.insert_one(file_data)
-    hackaton=db.hackatons.find_one()
-    print(hackaton)
+                x = collection.insert_one(file_data)
 
-create_collection_node = PythonOperator(
-    task_id='create_collections',
-    dag=ingestion_data_dag,
-    trigger_rule='none_failed',
-    python_callable=create_collections,
-    op_kwargs={},
-    depends_on_past=False,
-)
+# create_collection_node = PythonOperator(
+#     task_id='create_collections',
+#     dag=ingestion_data_dag,
+#     trigger_rule='none_failed',
+#     python_callable=create_collections,
+#     op_kwargs={},
+#     depends_on_past=False,
+# )
 
 
 
@@ -146,7 +158,7 @@ ingest_mongo_hackaton_node = PythonOperator(
     python_callable=ingest_collection,
     op_kwargs={
         "destination_collection": "hackatons",
-        "path": "raw_hackaton_data",
+        "path": "/opt/airflow/dags/data/raw_hackaton_data",
         "db": "mydb",
     },
     depends_on_past=False,
@@ -159,7 +171,7 @@ ingest_mongo_participant_node = PythonOperator(
     python_callable=ingest_collection,
     op_kwargs={
         "destination_collection": "participants",
-        "path": "raw_participant_data",
+        "path": "/opt/airflow/dags/data/raw_participant_data",
         "db": "mydb",
     },
     depends_on_past=False,
@@ -172,12 +184,16 @@ ingest_mongo_project_node = PythonOperator(
     python_callable=ingest_collection,
     op_kwargs={
         "destination_collection": "projects",
-        "path": "raw_project_data",
+        "path": "/opt/airflow/dags/data/raw_project_data",
         "db": "mydb",
     },
     depends_on_past=False,
 )
 
+
+dummy_node = DummyOperator(
+    task_id='dummy_node',
+    dag=ingestion_data_dag)
 
 closing_node = DummyOperator(
     task_id='finale',
@@ -185,5 +201,6 @@ closing_node = DummyOperator(
     trigger_rule='none_failed'
 )
 
-[download_hackatons_node, download_participants_node, download_projects_node] >> create_collection_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >> closing_node
+
+[clean_hackatons, clean_projects, clean_participants] >> dummy_node >> [download_hackatons_node, download_participants_node, download_projects_node] >> dummy_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >> closing_node
  
