@@ -128,7 +128,7 @@ def ingest_collection(destination_collection, path, db):
     hackaton=db.hackatons.find_one()
     print(hackaton)
 
-create_collection = PythonOperator(
+create_collection_node = PythonOperator(
     task_id='create_collections',
     dag=ingestion_data_dag,
     trigger_rule='none_failed',
@@ -139,7 +139,7 @@ create_collection = PythonOperator(
 
 
 
-ingest_mongo_hackaton = PythonOperator(
+ingest_mongo_hackaton_node = PythonOperator(
     task_id='ingest_hackaton',
     dag=ingestion_data_dag,
     trigger_rule='none_failed',
@@ -152,7 +152,7 @@ ingest_mongo_hackaton = PythonOperator(
     depends_on_past=False,
 )
 
-ingest_mongo_participant = PythonOperator(
+ingest_mongo_participant_node = PythonOperator(
     task_id='ingest_participant',
     dag=ingestion_data_dag,
     trigger_rule='none_failed',
@@ -165,7 +165,7 @@ ingest_mongo_participant = PythonOperator(
     depends_on_past=False,
 )
 
-ingest_mongo_project = PythonOperator(
+ingest_mongo_project_node = PythonOperator(
     task_id='ingest_project',
     dag=ingestion_data_dag,
     trigger_rule='none_failed',
@@ -179,10 +179,11 @@ ingest_mongo_project = PythonOperator(
 )
 
 
-eleventh_node = DummyOperator(
+closing_node = DummyOperator(
     task_id='finale',
     dag=ingestion_data_dag,
     trigger_rule='none_failed'
 )
 
-[download_hackatons_node, download_participants_node, download_projects_node] >> eleventh_node
+[download_hackatons_node, download_participants_node, download_projects_node] >> create_collection_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >> closing_node
+ 
