@@ -5,6 +5,7 @@ import requests
 import random
 import json
 import glob
+import os
 from pymongo import MongoClient
 from pprint import pprint
 import warnings
@@ -30,31 +31,19 @@ ingestion_data_dag = DAG(
     template_searchpath=['/opt/airflow/dags/']
 )
 
-clean_hackatons = BashOperator(
+clean_folders= BashOperator(
     task_id = 'clean_hackatons',
     dag = ingestion_data_dag,
     trigger_rule='none_failed',
-    bash_command='rm /opt/airflow/dags/data/raw_hackaton_data/*',
-)
-
-
-clean_participants = BashOperator(
-    task_id = 'clean_participants',
-    dag = ingestion_data_dag,
-    trigger_rule='none_failed',
-    bash_command='rm /opt/airflow/dags/data/raw_participant_data/*',
-)
-
-
-clean_projects = BashOperator(
-    task_id = 'clean_projects',
-    dag = ingestion_data_dag,
-    trigger_rule='none_failed',
-    bash_command='rm /opt/airflow/dags/data/raw_project_data/*',
+    bash_command='rm -rf /opt/airflow/dags/data/*',
 )
 
 def _get_urls(dropbox_token, dropbox_link, destination_folder):
     import dropbox
+
+    if not os.path.isdir(destination_folder):
+        os.makedirs(destination_folder)
+
     dbx = dropbox.Dropbox("sl.BThg5FS_elL0xsQVQU2BiH1GMCzVRRMvgd_KaspnXVEqUtVirvOwN2Vsa-kt5tcNWnZXh8OljlOZEWUvLh1WRjr4F1gF6de-OeBcAjPjF_hNzILd7BUAgKCumjQjxyuPHRgi9n1gZ6au")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
@@ -121,7 +110,6 @@ download_projects_node = PythonOperator(
 #     projects = mydb["projects"]
 
 def ingest_collection(destination_collection, path, db):
-    import os
     import json
     # assign directory
     directory = path
@@ -202,5 +190,5 @@ closing_node = DummyOperator(
 )
 
 
-[clean_hackatons, clean_projects, clean_participants] >> dummy_node >> [download_hackatons_node, download_participants_node, download_projects_node] >> dummy_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >> clean_hackatons >> clean_participants >> clean_projects >> closing_node
+clean_folders >> [download_hackatons_node, download_participants_node, download_projects_node] >> dummy_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >>  closing_node
  
