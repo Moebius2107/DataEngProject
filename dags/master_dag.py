@@ -39,10 +39,18 @@ trigger_staging_dag_node = TriggerDagRunOperator(
         wait_for_completion=True,
     )
 
+trigger_production_dag_node = TriggerDagRunOperator(
+        task_id="trigger_production_dag",
+        dag=master_dag,
+        trigger_dag_id="production_data_dag",  # Ensure this equals the dag_id of the DAG to trigger
+        reset_dag_run=True,
+        wait_for_completion=True,
+    )
+
 closing_node = DummyOperator(
     task_id='finale_master',
-    dag=master_dag,
+    dag=master_dag,   
     trigger_rule='none_failed'
 )
 
-trigger_ingestion_dag_node >> trigger_staging_dag_node >> closing_node
+trigger_ingestion_dag_node >> trigger_staging_dag_node >> trigger_production_dag_node >> closing_node
