@@ -84,7 +84,6 @@ get_hackaton_dataframe_node = PythonOperator(
         "host":"mongo",
         "port":27017, 
         "collection_name": 'hackatons',
-        ""
     },
     depends_on_past=False,
 )
