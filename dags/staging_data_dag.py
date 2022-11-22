@@ -66,9 +66,13 @@ check_db_existence_node=PythonOperator(
     depends_on_past=False,
 )
 
-def _transform_to_frame(collection_name, host, port, db_name, username=None, password=None):
+def _transform_to_frame(collection_name, collection_frame_name, host, port, db_name, username=None, password=None):
     mydb=_connect_to_db(host, port, db_name, username=None, password=None)
-    collection_frame  = pd.DataFrame(list(mydb[collection_name].find()))
+    collection_frame_name  = pd.DataFrame(list(mydb[collection_name].find()))
+    collection_no_duplicated = collection_frame_name
+    if collection_frame_name.duplicated().contains(True):
+        collection_no_duplicated = collection_frame_name.drop_duplicates()
+    
 
 get_hackaton_dataframe_node = PythonOperator(
     task_id='get_hackaton_dataframe',
@@ -79,7 +83,8 @@ get_hackaton_dataframe_node = PythonOperator(
         "db_name": "data_eng_db",
         "host":"mongo",
         "port":27017, 
-        "collection_name": 'hackatons'
+        "collection_name": 'hackatons',
+        ""
     },
     depends_on_past=False,
 )
@@ -112,6 +117,21 @@ get_project_dataframe_node = PythonOperator(
     },
     depends_on_past=False,
 )
+
+
+# def _delete_duplicated_data(frame_name) : 
+    
+
+# delete_duplicate_hackaton_node = PythonOperator(
+#     task_id='delete_duplicate_hackaton',
+#     dag=staging_data_dag,
+#     trigger_rule='none_failed',
+#     python_callable=_delete_duplicated_data,
+#     op_kwargs={
+#         "frame_name": "hackaton"
+#     },
+#     depends_on_past=False,
+# )
 
 eleventh_node = DummyOperator(
     task_id='finale',
