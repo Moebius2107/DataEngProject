@@ -2,7 +2,6 @@ import airflow
 import datetime
 import urllib.request as request
 import requests
-import random
 import json
 import glob
 import os
@@ -42,14 +41,14 @@ clean_folders_node= BashOperator(
 """_get_urls function is used to retrieve all the files stored at the dropbox_link address and then save them in the destination_folder"""
 def _get_urls(dropbox_token, dropbox_link, destination_folder):
     import dropbox
-      
+    import logging
     #Verify if the destination_folder exist, if not then create it
     if not os.path.isdir(destination_folder):
         os.makedirs(destination_folder)
 
       #Token of our DropBox application needed to download a file shared by another user
     dbx = dropbox.Dropbox(app_key = 'shzy2qdkfpbbxtc',app_secret ='wrdl22673rak9fr',oauth2_refresh_token ="cY3v-w-rOWIAAAAAAAAAAb7Lnd3nxlJM_WXVUobcu1VNz_V0Ue1HdjaSrpM7yCeb")
-#     dbx = dropbox.Dropbox("sl.BTi5JEe-iWXKSOnNPX5NGnWR4ZoCwUaIgvL4fvkBCM-fx14sJFg_dg9DsMgxBhfqkcIoe-8H7XmaU9HGhDLwlmwDBftMilRKeCvZUna7_nG4PP4dBHBd53qybYw5FLBNPtYsB6A776EI")
+    #     dbx = dropbox.Dropbox("sl.BTi5JEe-iWXKSOnNPX5NGnWR4ZoCwUaIgvL4fvkBCM-fx14sJFg_dg9DsMgxBhfqkcIoe-8H7XmaU9HGhDLwlmwDBftMilRKeCvZUna7_nG4PP4dBHBd53qybYw5FLBNPtYsB6A776EI")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
     entries = dbx.files_list_folder(path="", shared_link=link).entries

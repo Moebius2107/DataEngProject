@@ -34,9 +34,9 @@ staging_data_dag = DAG(
 def get_mongodb_data(collection_name):
     warnings.filterwarnings('ignore')
     myclient = MongoClient("mongodb://mongo:27017/") #Mongo URI format
-    mydb = myclient["customer_db"]
+    mydb = myclient["data_eng_db"]
     collection = mydb.collection_name
-    data = pd.DataFrame(list(collection.find()))
+    data = pd.DataFrame(list(collection.find({})))
 
 
 get_hackaton_data = PythonOperator(
