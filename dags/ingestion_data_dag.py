@@ -2,7 +2,6 @@ import airflow
 import datetime
 import urllib.request as request
 import requests
-import random
 import json
 import glob
 import os
@@ -42,14 +41,14 @@ clean_folders_node= BashOperator(
 """_get_urls function is used to retrieve all the files stored at the dropbox_link address and then save them in the destination_folder"""
 def _get_urls(dropbox_token, dropbox_link, destination_folder):
     import dropbox
-      
+    import logging
     #Verify if the destination_folder exist, if not then create it
     if not os.path.isdir(destination_folder):
         os.makedirs(destination_folder)
 
       #Token of our DropBox application needed to download a file shared by another user
     dbx = dropbox.Dropbox(app_key = 'shzy2qdkfpbbxtc',app_secret ='wrdl22673rak9fr',oauth2_refresh_token ="cY3v-w-rOWIAAAAAAAAAAb7Lnd3nxlJM_WXVUobcu1VNz_V0Ue1HdjaSrpM7yCeb")
-#     dbx = dropbox.Dropbox("sl.BTi5JEe-iWXKSOnNPX5NGnWR4ZoCwUaIgvL4fvkBCM-fx14sJFg_dg9DsMgxBhfqkcIoe-8H7XmaU9HGhDLwlmwDBftMilRKeCvZUna7_nG4PP4dBHBd53qybYw5FLBNPtYsB6A776EI")
+    #     dbx = dropbox.Dropbox("sl.BTi5JEe-iWXKSOnNPX5NGnWR4ZoCwUaIgvL4fvkBCM-fx14sJFg_dg9DsMgxBhfqkcIoe-8H7XmaU9HGhDLwlmwDBftMilRKeCvZUna7_nG4PP4dBHBd53qybYw5FLBNPtYsB6A776EI")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
     entries = dbx.files_list_folder(path="", shared_link=link).entries
@@ -102,55 +101,12 @@ download_projects_node = PythonOperator(
 )
 
 
-# def _create_collections():
-#     warnings.filterwarnings('ignore')
-
-#     #we use the MongoClient to communicate with the running database instance.
-#     myclient = MongoClient("mongodb://mongo:27017/") #Mongo URI format
-#     mydb = myclient["customer_db"]
-
-#     #Or you can use the attribute style 
-#     #mydb = myclient.customer_db
-
-#     print(mydb.list_collection_names())
-#     participants = mydb["participants"]
-#     hackatons = mydb["hackatons"]
-#     projects = mydb["projects"]
-
-
-
-# def _connect_mongo(host, port,  db, username=None, password=None):
-
-#     global _connection_to_db
-
-#     if username and password:
-#         mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (username, password, host, port, db)
-#         conn = MongoClient(mongo_uri)
-#     else:
-#         conn = MongoClient(host, port)
-
-#     _connection_to_db = conn[db]
-
-# connect_mongodb_node = PythonOperator(
-#     task_id='connect_mongo',
-#     dag=ingestion_data_dag,
-#     trigger_rule='none_failed',
-#     python_callable=_connect_mongo,
-#     op_kwargs={
-#         "host": "localhost",
-#         "port": 27017,
-#         "db": "data_eng_db",
-#     },
-#     depends_on_past=False,
-# )
 
 def _ingest_collection(destination_collection, path, host, port, db_name, username=None, password=None):
     import json
     # assign directory
     directory = path
     
-    # iterate over files in
-    # that directory
     warnings.filterwarnings('ignore')
 
     if username and password:
@@ -161,8 +117,6 @@ def _ingest_collection(destination_collection, path, host, port, db_name, userna
 
     mydb = conn[db_name]
 
-    #myclient = MongoClient("mongodb://mongo:27017/") #Mongo URI format
-    #mydb = myclient["data_eng_db"]
 
     collection = mydb[destination_collection]
     for filename in os.listdir(directory):
@@ -172,16 +126,6 @@ def _ingest_collection(destination_collection, path, host, port, db_name, userna
             with open(f) as file:
                 file_data = json.load(file)
                 x = collection.insert_one(file_data)
-
-# create_collection_node = PythonOperator(
-#     task_id='create_collections',
-#     dag=ingestion_data_dag,
-#     trigger_rule='none_failed',
-#     python_callable=create_collections,
-#     op_kwargs={},
-#     depends_on_past=False,
-# )
-
 
 
 ingest_mongo_hackaton_node = PythonOperator(

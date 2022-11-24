@@ -14,6 +14,7 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
+from airflow import AirflowException
 
 
 default_args_dict = {
@@ -31,46 +32,105 @@ staging_data_dag = DAG(
     template_searchpath=['/opt/airflow/dags/']
 )
 
-def get_mongodb_data(collection_name):
-    warnings.filterwarnings('ignore')
-    myclient = MongoClient("mongodb://mongo:27017/") #Mongo URI format
-    mydb = myclient["customer_db"]
-    collection = mydb.collection_name
-    data = pd.DataFrame(list(collection.find()))
+def _connect_to_db(host, port, db_name, username=None, password=None):
+    if username and password:
+         mongo_uri = 'mongodb://%s:%s@%s:%s/%s' % (username, password, host, port, db_name)
+         conn = MongoClient(mongo_uri)
+    else:
+         conn = MongoClient(host, port)
 
+    if not(conn.list_database_names().__contains__(db_name)):
+        raise AirflowException("Error: database doesn't exist")
+    return conn[db_name]
 
-get_hackaton_data = PythonOperator(
-    task_id='get_hackaton_data',
+def _check_configuration(host, port, db_name, collection_names, username=None, password=None):
+    mydb=_connect_to_db(host, port, db_name, username, password)
+    for collection in collection_names:
+        if not(mydb.list_collection_names().__contains__(collection)):
+            raise AirflowException("Error: %s doesn't exist", collection)
+                
+    return True    
+
+check_db_existence_node=PythonOperator(
+    task_id='check_db_existence',
     dag=staging_data_dag,
     trigger_rule='none_failed',
-    python_callable=get_mongodb_data,
+    python_callable=_check_configuration,
     op_kwargs={
-        "collection_name": "hackatons",
+        "path": "/opt/airflow/dags/data/raw_hackaton_data",
+        "db_name": "data_eng_db",
+        "host":"mongo",
+        "port":27017, 
+        "collection_names": ['hackatons', 'projects', 'participants']
     },
     depends_on_past=False,
 )
 
-get_participant_data = PythonOperator(
-    task_id='get_participant_data',
+def _transform_to_frame(collection_name, collection_frame_name, host, port, db_name, username=None, password=None):
+    mydb=_connect_to_db(host, port, db_name, username=None, password=None)
+    collection_frame_name  = pd.DataFrame(list(mydb[collection_name].find()))
+    collection_no_duplicated = collection_frame_name
+    if collection_frame_name.duplicated().contains(True):
+        collection_no_duplicated = collection_frame_name.drop_duplicates()
+    
+
+get_hackaton_dataframe_node = PythonOperator(
+    task_id='get_hackaton_dataframe',
     dag=staging_data_dag,
     trigger_rule='none_failed',
-    python_callable=get_mongodb_data,
+    python_callable=_transform_to_frame,
     op_kwargs={
-        "collection_name": "participants",
+        "db_name": "data_eng_db",
+        "host":"mongo",
+        "port":27017, 
+        "collection_name": 'hackatons',
     },
     depends_on_past=False,
 )
 
-get_project_data = PythonOperator(
-    task_id='get_project_data',
+get_participant_dataframe_node = PythonOperator(
+    task_id='get_participant_dataframe',
     dag=staging_data_dag,
     trigger_rule='none_failed',
-    python_callable=get_mongodb_data,
+    python_callable=_transform_to_frame,
     op_kwargs={
+        "db_name": "data_eng_db",
+        "host":"mongo",
+        "port":27017, 
+        "collection_name": 'participants'
+    },
+    depends_on_past=False,
+)
+
+
+get_project_dataframe_node = PythonOperator(
+    task_id='get_project_dataframe',
+    dag=staging_data_dag,
+    trigger_rule='none_failed',
+    python_callable=_transform_to_frame,
+    op_kwargs={
+        "db_name": "data_eng_db",
+        "host":"mongo",
+        "port":27017, 
         "collection_name": "projects",
     },
     depends_on_past=False,
 )
+
+
+# def _delete_duplicated_data(frame_name) : 
+    
+
+# delete_duplicate_hackaton_node = PythonOperator(
+#     task_id='delete_duplicate_hackaton',
+#     dag=staging_data_dag,
+#     trigger_rule='none_failed',
+#     python_callable=_delete_duplicated_data,
+#     op_kwargs={
+#         "frame_name": "hackaton"
+#     },
+#     depends_on_past=False,
+# )
 
 eleventh_node = DummyOperator(
     task_id='finale',
@@ -78,3 +138,4 @@ eleventh_node = DummyOperator(
     trigger_rule='none_failed'
 )
 
+check_db_existence_node >> [get_hackaton_dataframe_node, get_project_dataframe_node, get_participant_dataframe_node] >> eleventh_node
