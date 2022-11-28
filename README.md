@@ -8,7 +8,7 @@ docker compose up
 ```
 > Aller sur http://localhost:8080/home
 
-Subject : Hackaton (2018)
+## Subject : Hackaton (2018)
 
 Presentation of the subject
 For this project, we have retrieved datasets about the hackatons that took place in the US in may 2018, provided by Prof Alex Nolte. We will use 3 datasets containing information about: the [participants](https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AACnkkHEropuFClu7XgbhPuja/participants?dl=0&subfolder_nav_tracking=1), the [projects](https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AABMXKB4WetwcT_f1YoNtpbDa/projects?dl=0&subfolder_nav_tracking=1), and about the [hackaton](https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AACsy_Ll8IgUjXujQSVR4KUIa/hackathons?dl=0&subfolder_nav_tracking=1) itself. With the recovered elements we will try to answer the following two questions in a user-friendly format:
@@ -30,7 +30,8 @@ Une fois les dossiers supprimés, nous allons les recréer avec les tâches "dow
 
 ## 2. Staging area
 Avant de commmence le traitement des données, nous vérifions si la base de données et les collections ont été créées avec la tâche "check_db_existence".
-Une fois les données bien chargées, nous utilisons Pandas pour les nettoyer et les transformer. Pandas est spécifiquement conçue pour la manipulation et l’analyse de données en langage Python. Nous nous aidons de Jupyter Notebook qui fait office de debugger dans notre projet. Nous l'utilisons pour visualiser les traitements que nous faisons sur les données, ce qui permet de voir les commandes qui ne donnent pas les résultats voulues.
+Une fois les données bien chargées, nous utilisons Pandas pour les nettoyer et les transformer. Pandas est spécifiquement conçue pour la manipulation et l’analyse de données en langage Python. One of the best advantages of Pandas is it needs less writing for more work done. What would have taken multiple lines in Python without any support libraries, can simply be achieved through 1-2 lines with the use of Pandas. Thus, using Pandas helps to shorten the procedure of handling data. Also Pandas can import large amounts of data very fast ce qui permet de faire des économies de temps.
+Nous nous aidons de Jupyter Notebook qui fait office de debugger dans notre projet. Nous l'utilisons pour visualiser les traitements que nous faisons sur les données, ce qui permet de voir les commandes qui ne donnent pas les résultats voulues.
 Nous commençons par transformer les documents en DataFrame pour les manipuler plus facilement. Puis
 
 ![Staging Dag](/img/staging_dag.png)
