@@ -1,4 +1,13 @@
 # DataEngProject
+
+Pour lancer le projet :
+> Se placer dans le dossier DataEngProject
+> Taper dans le terminal (PowerShell ou autre) :
+```
+docker compose up
+```
+> Aller sur http://localhost:8080/home
+
 Subject : Hackaton (2018)
 
 Presentation of the subject
@@ -11,7 +20,8 @@ For this project, we have retrieved datasets about the hackatons that took place
 To complete this data flow we will go through the following stages:
 
 ## 0. Coordonner les différentes tâches
-Airflow is a dataflow orchestrator used to define data engineering workflows (DAGs describe how to run a data pipeline). It allows parallelize jobs, schedule them appropriately with dependencies. Nous allons donc l'utiliser pour notre projet.
+Airflow is a dataflow orchestrator used to define data engineering workflows (DAGs describe how to run a data pipeline). It allows parallelize jobs, schedule them appropriately with dependencies. Nous allons donc l'utiliser pour notre projet. Comme nous souhaitons séparer clairement les différentes étapes dans le traitement de nos données, nous avons décidé d'avoir trois fichiers, un par DAG. Nous avons aussi implémenté un Master Dag qui va trigger le prochain DAG une fois que le précédent se termine.
+![Master Dag](/img/master_dag.PNG)
 
 ## 1. Data selection and cleaning with MongoDB (ingeston data)
 Nous souhaitons avoir un environnement propre pour commencer, c'est pourquoi la tâche "clean_folders" apparaît en premier : nous supprimons toutes les données qui auraient pu être téléchargé suite à des exécutions précédentes du DAG. 
@@ -19,10 +29,14 @@ Une fois les dossiers supprimés, nous allons les recréer avec les tâches "dow
 ![Ingestion Dag](/img/ingestion_dag.PNG)
 
 ## 2. Staging area
-Avant de commmence le traitement des données
-Une fois les données chargées, nous utilisons Pandas pour les nettoyer et les transformer. Pandas est spécifiquement conçue pour la manipulation et l’analyse de données en langage Python. Nous nous aidons de Jupyter Notebook pour visualiser les traitements que nous faisons dessus, ce qui 
+Avant de commmence le traitement des données, nous vérifions si la base de données et les collections ont été créées avec la tâche "check_db_existence".
+Une fois les données bien chargées, nous utilisons Pandas pour les nettoyer et les transformer. Pandas est spécifiquement conçue pour la manipulation et l’analyse de données en langage Python. Nous nous aidons de Jupyter Notebook qui fait office de debugger dans notre projet. Nous l'utilisons pour visualiser les traitements que nous faisons sur les données, ce qui permet de voir les commandes qui ne donnent pas les résultats voulues.
 Nous commençons par transformer les documents en DataFrame pour les manipuler plus facilement. Puis
 
-![Staging Dag](./img/staging_dag.png)
+![Staging Dag](/img/staging_dag.png)
 ## 3. Production Data and answer to the questions
         (To be completed)
+
+
+## 4. What can be improved
+Comme nous avons eu du mal à avancer dans le projet tout au long du projet, certains parties auraient pu être améliorer si nous avions eu plus de temps.
