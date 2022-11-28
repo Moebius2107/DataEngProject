@@ -35,7 +35,7 @@ Nous nous aidons aussi de Jupyter Notebook qui fait office de debugger dans notr
 Nous commençons par transformer les documents en DataFrame pour les manipuler plus facilement. Puis les données ont subi plusieurs transformations afin de devenir exploitable.
 ### A. Suppression des doublons
 Avec la fonction describe(), nous pouvons voir combien de lignes comptent le DataFrame et combien de valeurs sont uniques pour chaque colonne dedans. Par exemple, nous avons 2000 participants mais seulement 500 participants-id uniques, ce qui implique que trois-quart de ces valeurs sont identiques et donc inutiles.
-![Duplicate information](/img/duplicate_information.png)
+![Duplicate information](/img/duplicate_information.PNG)
 Nous allons donc les supprimer.
 ### B. Suppression des colonnes
 Nous allons ensuite supprimer les colonnes qui contiennent des informations qui ne seront pas utiles dans notre analyse avec la fonction drop().
@@ -43,7 +43,7 @@ Nous allons ensuite supprimer les colonnes qui contiennent des informations qui 
 Il y a de nombreux vides dans les données que nous récupérons, essentiellement dans les colonnes que nous avons supprimées dans l'étape précédente. Celles qui restent en contiennent aussi et nous devons les gérer. Les lignes où il manque l'id, une référence aux autres tables ou la localisation sont supprimées car nous faisons nos analyses dessus et nous ne pouvons pas déduire leur valeur depuis leur voisin. Nous gardons les lignes ayant un vide sur les informations non essentielles mais qui peuvent être intéressantes à étudier dans un autre contexte par exemple.
 
 
-![Staging Dag](/img/staging_dag.png)
+![Staging Dag](/img/staging_dag.PNG)
 ## 3. Production Data and answer to the questions
         (To be completed)
 
