@@ -16,7 +16,7 @@ Airflow is a dataflow orchestrator used to define data engineering workflows (DA
 ## 1. Data selection and cleaning with MongoDB (ingeston data)
 Nous souhaitons avoir un environnement propre pour commencer, c'est pourquoi la tâche "clean_folders" apparaît en premier : nous supprimons toutes les données qui auraient pu être téléchargé suite à des exécutions précédentes du DAG. 
 Une fois les dossiers supprimés, nous allons les recréer avec les tâches "download_XX_url_content". Les données sont stockées sur DropBox. Pour pouvoir y accéder nous avons le lien décrit dans la présentation mais ce n'est pas suffisant pour télécharger les différents fichiers : il faut créer une application Dropbox et obtenir un access token. Une fois le token obtenu, nous pouvons l'utiliser pour se conneceter à l'api de DropBox dans nos tâches. Nous récupérons dans notre dossier dag/data nos fichiers sous format JSON. Nous pouvons voir qu'il y a un "dummy_node" après ces tâches, en effet, nous aurions pu juste l'enlever et mettre à la suite par exemple "download_hackaton_url_content" et "ingest_hackaton" mais nous avons choisi d'attendre que toutes les tâches de téléchargement soient finies avant de passer à la suite. Une fois les tâches de téléchargement finies, nous envoyons les données sur MongoDB. Les données sont stockés in JSON-like documents, ce qui permet de ne pas avoir trop de changement par rapport à leur état initial. De plus, comme nous ne procédons à aucun traitement durant cette étape, le fait que MongoDB ne provide pas de schéma est useful/handy.
-![Ingestion Dag](./img/ingestion_dag.png)
+![Ingestion Dag](/img/ingestion_dag.PNG)
 
 ## 2. Staging area
 Avant de commmence le traitement des données
