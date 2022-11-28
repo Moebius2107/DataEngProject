@@ -72,51 +72,79 @@ def _transform_to_frame(collection_name, collection_frame_name, host, port, db_n
     collection_no_duplicated = collection_frame_name
     if collection_frame_name.duplicated().contains(True):
         collection_no_duplicated = collection_frame_name.drop_duplicates()
+
+def _cleaning_participants(collection_frame_name, host, port, db_name, username=None, password=None):
+    mydb=_connect_to_db(host, port, db_name, username=None, password=None)
+    participants_frame  = pd.DataFrame(list(mydb['participants'].find()))
+    participants_no_duplicata = participants_frame.groupby('participant-url').first().reset_index()
+    participants_no_columns = participants_no_duplicata.drop(columns=['participant-linkedin', 'participant-twitter', 'participant-bio', 'participant-followers', 'participant-likes'])
+    
     
 
-get_hackaton_dataframe_node = PythonOperator(
-    task_id='get_hackaton_dataframe',
+# get_hackaton_dataframe_node = PythonOperator(
+#     task_id='get_hackaton_dataframe',
+#     dag=staging_data_dag,
+#     trigger_rule='none_failed',
+#     python_callable=_transform_to_frame,
+#     op_kwargs={
+#         "db_name": "data_eng_db",
+#         "host":"mongo",
+#         "port":27017, 
+#         "collection_name": 'hackatons',
+#     },
+#     depends_on_past=False,
+# )
+
+# get_participant_dataframe_node = PythonOperator(
+#     task_id='get_participant_dataframe',
+#     dag=staging_data_dag,
+#     trigger_rule='none_failed',
+#     python_callable=_transform_to_frame,
+#     op_kwargs={
+#         "db_name": "data_eng_db",
+#         "host":"mongo",
+#         "port":27017, 
+#         "collection_name": 'participants'
+#     },
+#     depends_on_past=False,
+# )
+
+
+# get_project_dataframe_node = PythonOperator(
+#     task_id='get_project_dataframe',
+#     dag=staging_data_dag,
+#     trigger_rule='none_failed',
+#     python_callable=_transform_to_frame,
+#     op_kwargs={
+#         "db_name": "data_eng_db",
+#         "host":"mongo",
+#         "port":27017, 
+#         "collection_name": "projects",
+#     },
+#     depends_on_past=False,
+# )
+
+wrangling_hackatons_data_node = DummyOperator(
+    task_id='wrangling_hackatons_data',
     dag=staging_data_dag,
-    trigger_rule='none_failed',
-    python_callable=_transform_to_frame,
-    op_kwargs={
-        "db_name": "data_eng_db",
-        "host":"mongo",
-        "port":27017, 
-        "collection_name": 'hackatons',
-    },
-    depends_on_past=False,
+    trigger_rule='none_failed'
+)
+wrangling_participants_data_node = DummyOperator(
+    task_id='wrangling_participants_data',
+    dag=staging_data_dag,
+    trigger_rule='none_failed'
+)
+wrangling_projects_data_node = DummyOperator(
+    task_id='wrangling_projects_data',
+    dag=staging_data_dag,
+    trigger_rule='none_failed'
 )
 
-get_participant_dataframe_node = PythonOperator(
-    task_id='get_participant_dataframe',
+merge_dataframe_node = DummyOperator(
+    task_id='merge_dataframe',
     dag=staging_data_dag,
-    trigger_rule='none_failed',
-    python_callable=_transform_to_frame,
-    op_kwargs={
-        "db_name": "data_eng_db",
-        "host":"mongo",
-        "port":27017, 
-        "collection_name": 'participants'
-    },
-    depends_on_past=False,
+    trigger_rule='none_failed'
 )
-
-
-get_project_dataframe_node = PythonOperator(
-    task_id='get_project_dataframe',
-    dag=staging_data_dag,
-    trigger_rule='none_failed',
-    python_callable=_transform_to_frame,
-    op_kwargs={
-        "db_name": "data_eng_db",
-        "host":"mongo",
-        "port":27017, 
-        "collection_name": "projects",
-    },
-    depends_on_past=False,
-)
-
 
 # def _delete_duplicated_data(frame_name) : 
     
@@ -132,10 +160,11 @@ get_project_dataframe_node = PythonOperator(
 #     depends_on_past=False,
 # )
 
-eleventh_node = DummyOperator(
+finale_node = DummyOperator(
     task_id='finale',
     dag=staging_data_dag,
     trigger_rule='none_failed'
 )
 
-check_db_existence_node >> [get_hackaton_dataframe_node, get_project_dataframe_node, get_participant_dataframe_node] >> eleventh_node
+check_db_existence_node >> [wrangling_projects_data_node, wrangling_hackatons_data_node, wrangling_participants_data_node] >> merge_dataframe_node >> finale_node
+#check_db_existence_node >> [get_hackaton_dataframe_node, get_project_dataframe_node, get_participant_dataframe_node] >> finale_node
