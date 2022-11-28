@@ -31,8 +31,15 @@ Une fois les dossiers supprimés, nous allons les recréer avec les tâches "dow
 ## 2. Staging area
 Avant de commmence le traitement des données, nous vérifions si la base de données et les collections ont été créées avec la tâche "check_db_existence".
 Une fois les données bien chargées, nous utilisons Pandas pour les nettoyer et les transformer. Pandas est spécifiquement conçue pour la manipulation et l’analyse de données en langage Python. One of the best advantages of Pandas is it needs less writing for more work done. What would have taken multiple lines in Python without any support libraries, can simply be achieved through 1-2 lines with the use of Pandas. Thus, using Pandas helps to shorten the procedure of handling data. Also Pandas can import large amounts of data very fast ce qui permet de faire des économies de temps.
-Nous nous aidons de Jupyter Notebook qui fait office de debugger dans notre projet. Nous l'utilisons pour visualiser les traitements que nous faisons sur les données, ce qui permet de voir les commandes qui ne donnent pas les résultats voulues.
-Nous commençons par transformer les documents en DataFrame pour les manipuler plus facilement. Puis
+Nous nous aidons aussi de Jupyter Notebook qui fait office de debugger dans notre projet. Nous l'utilisons pour visualiser les traitements que nous faisons sur les données, ce qui permet de voir les commandes qui ne donnent pas les résultats voulues.
+Nous commençons par transformer les documents en DataFrame pour les manipuler plus facilement. Puis les données ont subi plusieurs transformations afin de devenir exploitable.
+### A. Suppression des doublons
+Avec la fonction describe(), nous pouvons voir combien de lignes comptent le DataFrame et combien de valeurs sont uniques pour chaque colonne dedans. Par exemple, nous avons 2000 participants mais seulement 500 participants-id uniques, ce qui implique que trois-quart de ces valeurs sont identiques et donc inutiles.
+![Duplicate information](/img/duplicate_information.png)
+Nous allons donc les supprimer.
+### B. Suppression des colonnes
+Nous allons ensuite supprimer les colonnes qui contiennent des informations qui ne seront pas utiles dans notre analyse avec la fonction drop().
+
 
 ![Staging Dag](/img/staging_dag.png)
 ## 3. Production Data and answer to the questions
