@@ -39,6 +39,8 @@ Avec la fonction describe(), nous pouvons voir combien de lignes comptent le Dat
 Nous allons donc les supprimer.
 ### B. Suppression des colonnes
 Nous allons ensuite supprimer les colonnes qui contiennent des informations qui ne seront pas utiles dans notre analyse avec la fonction drop().
+### C. Gestion des null/vide
+Il y a de nombreux vides dans les données que nous récupérons, essentiellement dans les colonnes que nous avons supprimées dans l'étape précédente. Celles qui restent en contiennent aussi et nous devons les gérer. Les lignes où il manque l'id, une référence aux autres tables ou la localisation sont supprimées car nous faisons nos analyses dessus et nous ne pouvons pas déduire leur valeur depuis leur voisin. Nous gardons les lignes ayant un vide sur les informations non essentielles mais qui peuvent être intéressantes à étudier dans un autre contexte par exemple.
 
 
 ![Staging Dag](/img/staging_dag.png)
@@ -47,4 +49,4 @@ Nous allons ensuite supprimer les colonnes qui contiennent des informations qui 
 
 
 ## 4. What can be improved
-Comme nous avons eu du mal à avancer dans le projet tout au long du projet, certains parties auraient pu être améliorer si nous avions eu plus de temps.
+Comme nous avons eu du mal à avancer tout au long du projet, certains parties auraient pu être améliorer si nous avions eu plus de temps. Par exemple, nous pouvons varier les sources pour obtenir des données plus récentes, celles que nous utilisons datant de 2018. 
