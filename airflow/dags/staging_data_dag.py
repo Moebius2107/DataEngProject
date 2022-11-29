@@ -203,7 +203,7 @@ def merge_datasets():
     joined_data_0.to_csv('/opt/airflow/dags/staging/final_prodution_data.csv')
 
 merge_dataframe_node = PythonOperator(
-    task_id='wrangling_hackatons_data_node',
+    task_id='merge_dataframe_node',
     dag=staging_data_dag,
     trigger_rule='none_failed',
     python_callable=merge_datasets,
