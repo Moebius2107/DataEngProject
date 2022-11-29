@@ -47,8 +47,6 @@ We start by transforming the documents into DataFrame to manipulate them more ea
 
 ### A. Removing duplicates
 With the describe() function, we can see how many rows the DataFrame has and how many values are unique for each column in it. Identifiers where the columns we used to deleted the duplicates.
-Duplicate information](/img/duplicate_information.PNG)
-So we will delete them.
 ### B. Deleting the unuseful columns
 We will then delete the columns that contain information that will not be useful in our analysis with the drop() function.
 ### C. Null/empty management
