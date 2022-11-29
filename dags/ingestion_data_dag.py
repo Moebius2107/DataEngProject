@@ -57,9 +57,9 @@ def _get_urls(dropbox_token, dropbox_link, destination_folder):
     if not os.path.isdir(destination_folder):
         os.makedirs(destination_folder)
 
-      #Token of our DropBox application needed to download a file shared by another user
-    #dbx = dropbox.Dropbox(app_key = 'shzy2qdkfpbbxtc',app_secret ='wrdl22673rak9fr',oauth2_refresh_token ="cY3v-w-rOWIAAAAAAAAAAb7Lnd3nxlJM_WXVUobcu1VNz_V0Ue1HdjaSrpM7yCeb")
-    dbx = dropbox.Dropbox("sl.BT8CZ218Wk7GUMG4yjuxAex-mD3DnI6PKbs0AAlqM9Wm7VytEvHki7MlNIHi_FJoPQVgIo6uW0npTOfe_tjaf8QKmccTjXt5MycISl2scYRm8o5Wvs1LuLEK7Dx8iXI94cINtsiuZkaW")
+    #Token of our DropBox application needed to download a file shared by another user
+    dbx = dropbox.Dropbox(app_key = 'shzy2qdkfpbbxtc',app_secret ='wrdl22673rak9fr',oauth2_refresh_token ="cY3v-w-rOWIAAAAAAAAAAb7Lnd3nxlJM_WXVUobcu1VNz_V0Ue1HdjaSrpM7yCeb")
+    #dbx = dropbox.Dropbox("sl.BT8CZ218Wk7GUMG4yjuxAex-mD3DnI6PKbs0AAlqM9Wm7VytEvHki7MlNIHi_FJoPQVgIo6uW0npTOfe_tjaf8QKmccTjXt5MycISl2scYRm8o5Wvs1LuLEK7Dx8iXI94cINtsiuZkaW")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
     result = dbx.files_list_folder(path="", shared_link=link)
