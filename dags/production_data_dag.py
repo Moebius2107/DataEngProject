@@ -1,18 +1,20 @@
 import airflow
 import datetime
 import urllib.request as request
+import pandas as pd
 import requests
+import pymongo
 import json
 import glob
-import os
-from pymongo import MongoClient
 from pprint import pprint
 import warnings
+from pymongo import MongoClient
 from airflow import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
+from airflow import AirflowException
 
 
 default_args_dict = {
@@ -23,9 +25,10 @@ default_args_dict = {
     'retry_delay': datetime.timedelta(minutes=5),
 }
 
-ingestion_data_dag = DAG(
+production_data_dag = DAG(
     dag_id='production_data_dag',
     default_args=default_args_dict,
     catchup=False,
     template_searchpath=['/opt/airflow/dags/']
 )
+

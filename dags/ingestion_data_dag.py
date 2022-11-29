@@ -186,9 +186,6 @@ ingest_mongo_project_node = PythonOperator(
 )
 
 
-dummy_node = DummyOperator(
-    task_id='dummy_node',
-    dag=ingestion_data_dag)
 
 closing_node = DummyOperator(
     task_id='finale',
@@ -197,5 +194,5 @@ closing_node = DummyOperator(
 )
 
 
-clean_folders_node >> download_hackatons_node >> download_participants_node >> download_projects_node >> dummy_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >>  closing_node
+clean_folders_node >> download_hackatons_node >> download_participants_node >> download_projects_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >>  closing_node
  
