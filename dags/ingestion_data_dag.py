@@ -39,6 +39,7 @@ clean_folders_node= BashOperator(
     bash_command='rm -rf /opt/airflow/dags/data/*',
 )
 
+"""rocess_entries takes the dropbox link and download the JSON files"""
 def process_entries(entries, dbx, destination_folder, dropbox_link):
     import dropbox
     import logging
@@ -113,7 +114,7 @@ download_projects_node = PythonOperator(
 )
 
 
-
+"""_ingest_collection is used to connect to the database db_name in mongo then create and fill the collection destination_collection"""
 def _ingest_collection(destination_collection, path, host, port, db_name, username=None, password=None):
     import json
     # assign directory
@@ -139,7 +140,7 @@ def _ingest_collection(destination_collection, path, host, port, db_name, userna
                 file_data = json.load(file)
                 x = collection.insert_one(file_data)
 
-
+"""ingest_mongo_hackaton_node is used to load hackaton data on mongoDB"""
 ingest_mongo_hackaton_node = PythonOperator(
     task_id='ingest_hackaton',
     dag=ingestion_data_dag,
@@ -155,6 +156,7 @@ ingest_mongo_hackaton_node = PythonOperator(
     depends_on_past=False,
 )
 
+"""ingest_mongo_participant_node is used to load participant data on mongoDB"""
 ingest_mongo_participant_node = PythonOperator(
     task_id='ingest_participant',
     dag=ingestion_data_dag,
@@ -170,6 +172,7 @@ ingest_mongo_participant_node = PythonOperator(
     depends_on_past=False,
 )
 
+"""ingest_mongo_project_node is used to load project data on mongoDB"""
 ingest_mongo_project_node = PythonOperator(
     task_id='ingest_project',
     dag=ingestion_data_dag,
@@ -186,7 +189,7 @@ ingest_mongo_project_node = PythonOperator(
 )
 
 
-
+"""closing_node is used to check if all the tasks ended well"""
 closing_node = DummyOperator(
     task_id='finale',
     dag=ingestion_data_dag,
