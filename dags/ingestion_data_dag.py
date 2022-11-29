@@ -13,6 +13,7 @@ from airflow.operators.bash_operator import BashOperator
 from airflow.operators.python_operator import PythonOperator, BranchPythonOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
+from airflow import AirflowException
 
 
 default_args_dict = {
@@ -38,6 +39,16 @@ clean_folders_node= BashOperator(
     bash_command='rm -rf /opt/airflow/dags/data/*',
 )
 
+def process_entries(entries, dbx, destination_folder, dropbox_link):
+    import dropbox
+    import logging
+
+    for entry in entries:
+        if isinstance(entry, dropbox.files.FileMetadata):
+            file_path = '/'+entry.name
+            download_destination_path = destination_folder + file_path
+            res = dbx.sharing_get_shared_link_file_to_file(download_destination_path, dropbox_link, path=file_path).url
+
 """_get_urls function is used to retrieve all the files stored at the dropbox_link address and then save them in the destination_folder"""
 def _get_urls(dropbox_token, dropbox_link, destination_folder):
     import dropbox
@@ -47,16 +58,17 @@ def _get_urls(dropbox_token, dropbox_link, destination_folder):
         os.makedirs(destination_folder)
 
       #Token of our DropBox application needed to download a file shared by another user
-    dbx = dropbox.Dropbox(app_key = 'shzy2qdkfpbbxtc',app_secret ='wrdl22673rak9fr',oauth2_refresh_token ="cY3v-w-rOWIAAAAAAAAAAb7Lnd3nxlJM_WXVUobcu1VNz_V0Ue1HdjaSrpM7yCeb")
-    #     dbx = dropbox.Dropbox("sl.BTi5JEe-iWXKSOnNPX5NGnWR4ZoCwUaIgvL4fvkBCM-fx14sJFg_dg9DsMgxBhfqkcIoe-8H7XmaU9HGhDLwlmwDBftMilRKeCvZUna7_nG4PP4dBHBd53qybYw5FLBNPtYsB6A776EI")
+    #dbx = dropbox.Dropbox(app_key = 'shzy2qdkfpbbxtc',app_secret ='wrdl22673rak9fr',oauth2_refresh_token ="cY3v-w-rOWIAAAAAAAAAAb7Lnd3nxlJM_WXVUobcu1VNz_V0Ue1HdjaSrpM7yCeb")
+    dbx = dropbox.Dropbox("sl.BT8CZ218Wk7GUMG4yjuxAex-mD3DnI6PKbs0AAlqM9Wm7VytEvHki7MlNIHi_FJoPQVgIo6uW0npTOfe_tjaf8QKmccTjXt5MycISl2scYRm8o5Wvs1LuLEK7Dx8iXI94cINtsiuZkaW")
     link = dropbox.files.SharedLink(url=dropbox_link)
 
-    entries = dbx.files_list_folder(path="", shared_link=link).entries
-
-    for entry in entries:
-        file_path = '/'+entry.name
-        download_destination_path = destination_folder + file_path
-        res = dbx.sharing_get_shared_link_file_to_file(download_destination_path, dropbox_link, path=file_path).url
+    result = dbx.files_list_folder(path="", shared_link=link)
+    entries= result.entries
+    process_entries(entries, dbx, destination_folder, dropbox_link)
+    while result.has_more == True:
+        result = dbx.files_list_folder_continue(result.cursor)
+        entries = result.entries
+        process_entries(entries, dbx, destination_folder, dropbox_link)
 
 """download_hackatons_node is used to download all the files about hackatons"""
 download_hackatons_node = PythonOperator(
@@ -185,5 +197,5 @@ closing_node = DummyOperator(
 )
 
 
-clean_folders_node >> [download_hackatons_node, download_participants_node, download_projects_node] >> dummy_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >>  closing_node
+clean_folders_node >> download_hackatons_node >> download_participants_node >> download_projects_node >> dummy_node >> [ingest_mongo_hackaton_node, ingest_mongo_participant_node, ingest_mongo_project_node] >>  closing_node
  
