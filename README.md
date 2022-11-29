@@ -27,7 +27,11 @@ Airflow is a dataflow orchestrator used to define data engineering workflows (DA
 
 ## 1. Data selection and cleaning with MongoDB (ingeston data)
 We want to have a clean environment to start with, that's why the "clean_folders" task appears first: we delete all the data that could have been downloaded following previous executions of the DAG. 
-Once the folders are deleted, we will recreate them with the "download_XX_url_content" tasks. The data is stored on DropBox. To be able to access them we have the link described in the presentation but it is not enough to download the different files: we have to create a Dropbox application and obtain an access token. Once the token is obtained, we can use it to connect to the DropBox api in our tasks. We get in our dag/data folder our files in JSON format. We can see that there is a "dummy_node" after these tasks, in fact, we could have just removed it and put after it for example "download_hackaton_url_content" and "ingest_hackaton" but we chose to wait until all the download tasks are finished before moving on. Once the download tasks are finished, we send the data to MongoDB. The data is stored in JSON-like documents, which allows us not to have too much change from its initial state. Moreover, since we do not perform any processing during this step, the fact that MongoDB does not provide a schema is useful/handy.
+Once the folders are deleted, we will recreate them with the "download_XX_url_content" tasks. The data is stored on DropBox. To be able to access them we have the link described in the presentation but it is not enough to download the different files: we have to create a Dropbox application and obtain an access token. Once the token is obtained, we can use it to connect to the DropBox api in our tasks. 
+After having inconsistencies in our data we realized that we where taking only the first part of a paginated answer in the dropbox API call used to get the links, that is why we used the .continue functionality.
+We get in our dag/data folder our files in JSON format. Once the download tasks are finished, we send the data to MongoDB.
+
+The data is stored in JSON-like documents, which allows us not to have too much change from its initial state. Moreover, since we do not perform any processing during this step, the fact that MongoDB does not provide a schema isn't a problem for us.
 
 ![Ingestion Dag](/img/ingestion_dag.PNG)
 
@@ -35,19 +39,20 @@ Once the folders are deleted, we will recreate them with the "download_XX_url_co
 
 Before we start processing the data, we check if the database and the collections have been created with the "check_db_existence" task.
 Once the data is loaded properly, we use Pandas to clean and transform it. Pandas is specifically designed for data manipulation and analysis in Python. One of the best advantages of Pandas is it needs less writing for more work done. What would have taken multiple lines in Python without any support libraries, can simply be achieved through 1-2 lines with the use of Pandas. Thus, using Pandas helps to shorten the procedure of handling data. Also Pandas can import large amounts of data very fast which saves time.
-We also use Jupyter Notebook as a debugger in our project. We use it to visualize the processing we do on the data, which allows us to see the commands that do not give the desired results.
+We also use Jupyter Notebook as a debugger in our project. We use it to visualize the processing we do on the data, which allows us to see the commands that do not give the desired results. The 'Staging_notebook' has all the applied steps with all the prints we used to realize which transformations to make to each of our datasets.
+
 We start by transforming the documents into DataFrame to manipulate them more easily. Then the data underwent several transformations in order to become usable.
 
 ![Staging Dag](/img/staging_dag.PNG)
 
 ### A. Removing duplicates
-With the describe() function, we can see how many rows the DataFrame has and how many values are unique for each column in it. For example, we have 2000 participants but only 500 unique participant-ids, which implies that three-quarters of these values are identical and therefore useless.
+With the describe() function, we can see how many rows the DataFrame has and how many values are unique for each column in it. Identifiers where the columns we used to deleted the duplicates.
 Duplicate information](/img/duplicate_information.PNG)
 So we will delete them.
 ### B. Deleting the unuseful columns
 We will then delete the columns that contain information that will not be useful in our analysis with the drop() function.
 ### C. Null/empty management
-There are many voids in the data we are retrieving, mainly in the columns we deleted in the previous step. The remaining ones also contain them and we have to manage them. The rows where the id, a reference to other tables or the location is missing are deleted because we do our analysis on them and we can't deduce their value from their neighbor. We keep the rows with a void on non-essential information but which may be interesting to study in another context for example.
+There are many null values in the data we are retrieving. We keep the rows with a null on non-essential columns to the correctness of our data.
 ### D. Split columns
 We have a column with an adress, to analyse the country separately we splited the column to have that field separated.
 ### E. Unpivot columns
@@ -55,7 +60,12 @@ We had a column per participant in a project and we unpivot them to be able to j
 
 ## 3. Production Data and answer to the questions
 We could not include the Production Dag because we had an Docker/Airflow issue where we could not see and execute dags in the last 36 hours before the project deadline.
-We answered to the questions with our production data .csv file and Power BI tiles.
+
+We stored our production data in a PostgreSQL Database with a Star Schema.
+
+We answered to the questions with our production data .csv file (attached in the solution) and Power BI tiles.
+
+
 Which hackaton has the highest average skill level of the participants?
 ![Average skills](/img/skill_average.png)
 Which are the top 10 states (in order) with the most participants in hackatons?
