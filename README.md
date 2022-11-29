@@ -57,10 +57,10 @@ We had a column per participant in a project and we unpivot them to be able to j
 We could not include the Production Dag because we had an Docker/Airflow issue where we could not see and execute dags in the last 36 hours before the project deadline.
 We answered to the questions with our production data .csv file and Power BI tiles.
 Which hackaton has the highest average skill level of the participants?
-
+![Average skills](/img/skill_average.png)
 Which are the top 10 states (in order) with the most participants in hackatons?
 ![Top 10 States](/img/top_10_states.png)
-![Average skills](/img/skill_average.png)
+
 
 ## 4. What can be improved
 
