@@ -49,7 +49,7 @@ populate_table = PostgresOperator(
     task_id="populate_table",
     dag = production_data_dag,
     postgres_conn_id="postgres_not_default",
-    sql="sql/table_schema.sql",
+    sql="sql/table_data.sql",
 )
 
 finale_node = DummyOperator(
