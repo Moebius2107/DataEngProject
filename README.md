@@ -60,6 +60,10 @@ We had a column per participant in a project and we unpivot them to be able to j
 We could not include the Production Dag because we had an Docker/Airflow issue where we could not see and execute dags in the last 36 hours before the project deadline.
 
 We stored our production data in a PostgreSQL Database with a Star Schema.
+![Dim Hackatons](/img/dim_hackatons.png)
+![Dim Participants](/img/dim_participants.PNG)
+![Dim Projects](/img/dim_projects.png)
+![Fact Table](/img/facts.png)
 
 We answered to the questions with our production data .csv file (attached in the solution) and Power BI tiles.
 
