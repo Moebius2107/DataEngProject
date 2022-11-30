@@ -33,7 +33,9 @@ Airflow is a dataflow orchestrator used to define data engineering workflows (DA
 ## 1. Data selection and cleaning with MongoDB (ingeston data)
 We want to have a clean environment to start with, that's why the "clean_folders" task appears first: we delete all the data that could have been downloaded following previous executions of the DAG. 
 Once the folders are deleted, we will recreate them with the "download_XX_url_content" tasks. The data is stored on DropBox. To be able to access them we have the link described in the presentation but it is not enough to download the different files: we have to create a Dropbox application and obtain an access token. Once the token is obtained, we can use it to connect to the DropBox api in our tasks. 
+
 After having inconsistencies in our data we realized that we where taking only the first part of a paginated answer in the dropbox API call used to get the links, that is why we used the .continue functionality.
+
 We get in our dag/data folder our files in JSON format. Once the download tasks are finished, we send the data to MongoDB.
 
 The data is stored in JSON-like documents, which allows us not to have too much change from its initial state. Moreover, since we do not perform any processing during this step, the fact that MongoDB does not provide a schema isn't a problem for us.
@@ -43,7 +45,9 @@ The data is stored in JSON-like documents, which allows us not to have too much 
 ## 2. Staging area
 
 Before we start processing the data, we check if the database and the collections have been created with the "check_db_existence" task.
+
 Once the data is loaded properly, we use Pandas to clean and transform it. Pandas is specifically designed for data manipulation and analysis in Python. One of the best advantages of Pandas is it needs less writing for more work done. What would have taken multiple lines in Python without any support libraries, can simply be achieved through 1-2 lines with the use of Pandas. Thus, using Pandas helps to shorten the procedure of handling data. Also Pandas can import large amounts of data very fast which saves time.
+
 We also use Jupyter Notebook as a debugger in our project. We use it to visualize the processing we do on the data, which allows us to see the commands that do not give the desired results. The 'Staging_notebook' has all the applied steps with all the prints we used to realize which transformations to make to each of our datasets.
 
 We start by transforming the documents into DataFrame to manipulate them more easily. Then the data underwent several transformations in order to become usable.
@@ -63,20 +67,21 @@ We had a column per participant in a team project. As we want to work with parti
 
 ## 3. Production Data and answer to the questions
 We could not test the Production Dag because we had an Docker/Airflow issue where we could not see and execute dags in the last 36 hours before the project deadline.
-That is why we also include an .sql file that we tested and we know it works to create all the tables described below. It is located in dags/sql folder.
+That is why we also include an .sql file that we tested and we know it works to create and populate all the tables described below. It is located in dags/sql folder.
 
 We stored our production data in a PostgreSQL Database with a Star Schema.
 
 We took the csv file produced after the staging data and we imported it to PostgreSQL. With that imported table we could create the 3 dimensions we are going to use in our case:
--Hackatons:
+
+-Hackatons Dimention:
 
 ![Dim Hackatons](/img/dim_hackatons.png)
 
--Participants:
+-Participants Dimention:
 
 ![Dim Participants](/img/dim_participants.PNG)
 
-Projects:
+Projects Dimention:
 
 ![Dim Projects](/img/dim_projects.png)
 
@@ -85,16 +90,20 @@ And then with the identifiers of our dimention tables we created our facts table
 ![Fact Table](/img/facts.png)
 
 
-We answered to the questions with our production data and a Power BI report (we took screenshots of the results obtained).
+We answered to the questions thanks to our production data linked to a Power BI report (we took screenshots of the results obtained).
 
 Which hackaton has the highest average skill level of the participants?
+
 ![Average skills](/img/skill_average.png)
+
 Which are the top 10 states (in order) with the most participants in hackatons?
+
 ![Top 10 States](/img/top_10_states.png)
 
 
 ## 4. What can be improved
 
 We had some technical issues with Docker/Airflow (on the last 2 days airflow UI did not work for us and we could not resolve it) and lack of communication issues. 
+
 With more time we could improve for example the dimensions of our production data to be SCD type 2.
-Also we could have a better documentation of the work we did. 
+Also we could have written a better documentation, with more explanations of the decisions and the applied steps. 
