@@ -73,19 +73,19 @@ We stored our production data in a PostgreSQL Database with a Star Schema.
 
 We took the csv file produced after the staging data and we imported it to PostgreSQL. With that imported table we could create the 3 dimensions we are going to use in our case:
 
--Hackatons Dimention:
+-Hackatons Dimension:
 
 ![Dim Hackatons](/img/dim_hackatons.png)
 
--Participants Dimention:
+-Participants Dimension:
 
 ![Dim Participants](/img/dim_participants.PNG)
 
-Projects Dimention:
+Projects Dimension:
 
 ![Dim Projects](/img/dim_projects.png)
 
-And then with the identifiers of our dimention tables we created our facts table:
+And then with the identifiers of our dimension tables we created our facts table:
 
 ![Fact Table](/img/facts.png)
 
