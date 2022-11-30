@@ -57,16 +57,26 @@ We have a column with an adress, to analyse the country separately we splited th
 We had a column per participant in a project and we unpivot them to be able to join participants and projects afterwards.
 
 ## 3. Production Data and answer to the questions
-We could not include the Production Dag because we had an Docker/Airflow issue where we could not see and execute dags in the last 36 hours before the project deadline.
+We could not test the Production Dag because we had an Docker/Airflow issue where we could not see and execute dags in the last 36 hours before the project deadline.
+That is why we also include an .sql file that we tested and we know it works to create all the tables described below.
 
 We stored our production data in a PostgreSQL Database with a Star Schema.
+
+We took the csv file produced after the staging data and we imported it to PostgreSQL. With that imported table we could create the 3 dimensions we are going to use in our case:
+-Hackatons:
 ![Dim Hackatons](/img/dim_hackatons.png)
+
+-Participants:
 ![Dim Participants](/img/dim_participants.PNG)
+
+Projects:
 ![Dim Projects](/img/dim_projects.png)
+
+And then with the identifiers of our dimention tables we created our facts table:
 ![Fact Table](/img/facts.png)
 
-We answered to the questions with our production data .csv file (attached in the solution) and Power BI tiles.
 
+We answered to the questions with our production data and a Power BI report (we made screenshots of the results obtained).
 
 Which hackaton has the highest average skill level of the participants?
 ![Average skills](/img/skill_average.png)
@@ -76,4 +86,6 @@ Which are the top 10 states (in order) with the most participants in hackatons?
 
 ## 4. What can be improved
 
-We had some technical issues with Docker/Airflow (on the last 2 days airflow UI did not work for us and we could not resolve it) and lack of communication issues. With more time we could improve for example the dimensions of our production data to be SCD type 2. Also we could have a better documentation of the work we did. 
+We had some technical issues with Docker/Airflow (on the last 2 days airflow UI did not work for us and we could not resolve it) and lack of communication issues. 
+With more time we could improve for example the dimensions of our production data to be SCD type 2.
+Also we could have a better documentation of the work we did. 
