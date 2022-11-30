@@ -57,13 +57,13 @@ We will then delete the columns that contain information that will not be useful
 ### C. Null/empty management
 There are many null values in the data we are retrieving. We keep the rows with a null on non-essential columns to the correctness of our data.
 ### D. Split columns
-We have a column with an adress, to analyse the country separately we splited the column to have that field separated.
+We have a column with a full adress (Street, city, Postal code, Country), we want in our case to study the country separately, so we splited the column to have that field separated thanks to pandas rsplit function.
 ### E. Unpivot columns
-We had a column per participant in a project and we unpivot them to be able to join participants and projects afterwards.
+We had a column per participant in a team project. As we want to work with participants separately, we have to unpivot them. This change allow to be able to to join participants and projects afterwards.
 
 ## 3. Production Data and answer to the questions
 We could not test the Production Dag because we had an Docker/Airflow issue where we could not see and execute dags in the last 36 hours before the project deadline.
-That is why we also include an .sql file that we tested and we know it works to create all the tables described below.
+That is why we also include an .sql file that we tested and we know it works to create all the tables described below. It is located in dags/sql folder.
 
 We stored our production data in a PostgreSQL Database with a Star Schema.
 
