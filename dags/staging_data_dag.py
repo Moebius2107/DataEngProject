@@ -156,8 +156,11 @@ def wrangling_participants():
     participants = pd.read_csv('/opt/airflow/dags/staging/participants.csv')
     participants = participants.drop('participant-twitter', axis =1)
     participants = participants.drop('_id', axis=1)
+    participants = participants.drop('participant-bio',axis=1)
+    participants = participants.drop('participant-linkedin',axis=1)
     participants = participants[participants.columns.drop(list(participants.filter(regex='participant-skills.')))]
     unique_part = participants.drop_duplicates(subset="participant-id", keep='first')
+    unique_part = unique_part.drop('participant-bio',axis=1)
     unique_part.to_csv('/opt/airflow/dags/staging/participants_for_merge.csv')
 
 wrangling_participants_data = PythonOperator(

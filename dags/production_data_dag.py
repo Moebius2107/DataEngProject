@@ -16,11 +16,15 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.postgres_operator import PostgresOperator
 from airflow import AirflowException
 
+args={'owner': 'airflow'}
 
 default_args_dict = {
+    'owner': 'airflow', 
     'start_date': datetime.datetime(2020, 6, 25, 0, 0, 0),
     'concurrency': 1,
     'schedule_interval': "0 0 * * *",
+    # If a task fails, retry it once after waiting
+    # at least 5 minutes
     'retries': 1,
     'retry_delay': datetime.timedelta(minutes=5),
 }
@@ -31,4 +35,29 @@ production_data_dag = DAG(
     catchup=False,
     template_searchpath=['/opt/airflow/dags/']
 )
+
+create_table = PostgresOperator(
+    task_id="create_table",
+    dag = production_data_dag,
+    postgres_conn_id='postgres_not_default',
+    sql="sql/table_schema.sql",
+    trigger_rule='all_success',
+    autocommit=True
+)
+
+populate_table = PostgresOperator(
+    task_id="populate_table",
+    dag = production_data_dag,
+    postgres_conn_id="postgres_not_default",
+    sql="sql/table_schema.sql",
+)
+
+finale_node = DummyOperator(
+    task_id='finale',
+    dag=production_data_dag,
+    trigger_rule='none_failed'
+)
+
+create_table >> populate_table >> finale_node
+
 

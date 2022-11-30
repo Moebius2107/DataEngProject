@@ -72,4 +72,4 @@ Which are the top 10 states (in order) with the most participants in hackatons?
 
 ## 4. What can be improved
 
-We had some technical issues with Docker/Airflow (on the last 2 days airflow UI did not work for us and we could not resolve it) and lack of communication issues. With more time we could improve for example the dimentions of our production data to be SCD type 2. Also we could have a better documentation of the work we did. 
+We had some technical issues with Docker/Airflow (on the last 2 days airflow UI did not work for us and we could not resolve it) and lack of communication issues. With more time we could improve for example the dimensions of our production data to be SCD type 2. Also we could have a better documentation of the work we did. 
