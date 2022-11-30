@@ -1,4 +1,7 @@
 # DataEngProject
+To see our presentation :
+> [go to canva](https://www.canva.com/design/DAFSm2cQkeI/NIA07S4kV_CDY5WR32taIg/view?utm_content=DAFSm2cQkeI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 To download the project :
 > https://github.com/Moebius2107/DataEngProject
 
