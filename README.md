@@ -80,7 +80,7 @@ And then with the identifiers of our dimention tables we created our facts table
 ![Fact Table](/img/facts.png)
 
 
-We answered to the questions with our production data and a Power BI report (we made screenshots of the results obtained).
+We answered to the questions with our production data and a Power BI report (we took screenshots of the results obtained).
 
 Which hackaton has the highest average skill level of the participants?
 ![Average skills](/img/skill_average.png)
