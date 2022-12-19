@@ -81,7 +81,7 @@ That is why we also include an .sql file that we tested and we know it works to 
 
 We stored our production data in a PostgreSQL Database with a Star Schema, with 3 dimension tables and a fact table. In our case, and more focused in our analysis the fact table did not have columns for facts and it is only a table with all the dimensions identifiers.
 
-We took the csv file produced after the staging data and we imported it to PostgreSQL. With that imported table we could create the 3 dimensions we are going to use in our case:
+We took the csv file produced after the staging data and we imported it to PostgreSQL. With that imported table we could create the 3 dimensions we are going to use in our case. We are going to show captures of the Postgre UI where we can see queries to the different tables that we created.
 
 -Hackatons Dimension:
 
@@ -100,15 +100,17 @@ And then with the identifiers of our dimension tables we created our facts table
 ![Fact Table](/img/facts.png)
 
 
+### Answer to the questions
+
 We answered to the questions thanks to our production data linked to a Power BI report (we took screenshots of the results obtained).
 
-Which hackaton has the highest average skill level of the participants?
+### Which hackaton has the highest average skill level of the participants?
 
 ![Average skills](/img/skill_average.png)
 
 We can see that the hackathon with the highest average number of skills is the hackathon named 'Hackillinois 2018' of the US with around 20. The rest of the hackathons in this capture have around 15 skills.
 
-Which are the top 10 states (in order) with the most participants in hackatons?
+### Which are the top 10 states (in order) with the most participants in hackatons?
 
 ![Top 10 States](/img/top_10_states.png)
 
