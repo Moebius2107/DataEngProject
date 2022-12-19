@@ -16,7 +16,7 @@ docker compose up
 ## Subject : Hackaton (2018)
 
 Presentation of the subject
-For this project, we have retrieved datasets about the hackatons that took place in the US in may 2018, provided by Prof Alex Nolte. 
+For this project, we have retrieved datasets about the hackatons that took place in may 2018, provided by Prof Alex Nolte. 
 
 We will use 3 datasets containing information about: the [participants](https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AACnkkHEropuFClu7XgbhPuja/participants?dl=0&subfolder_nav_tracking=1), the [projects](https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AABMXKB4WetwcT_f1YoNtpbDa/projects?dl=0&subfolder_nav_tracking=1), and about the [hackaton](https://www.dropbox.com/sh/4i4tp6y0kl2lk24/AACsy_Ll8IgUjXujQSVR4KUIa/hackathons?dl=0&subfolder_nav_tracking=1) itself. With the recovered elements we will try to answer the following two questions in a user-friendly format:
 
@@ -50,28 +50,32 @@ Before we start processing the data, we check if the database and the collection
 
 Once the data is loaded properly, we use Pandas to clean and transform it. Pandas is specifically designed for data manipulation and analysis in Python. One of the best advantages of Pandas is it needs less writing for more work done. What would have taken multiple lines in Python without any support libraries, can simply be achieved through 1-2 lines with the use of Pandas. Thus, using Pandas helps to shorten the procedure of handling data. Also Pandas can import large amounts of data very fast which saves time.
 
-We also use Jupyter Notebook as a debugger in our project. We use it to visualize the processing we do on the data, which allows us to see the commands that do not give the desired results. The 'Staging_notebook' has all the applied steps with all the prints we used to realize which transformations to make to each of our datasets.
+We also use Jupyter Notebook as a debugger in our project. We use it to visualize the processing we do on the data, which allows us to see the commands that do not give the desired results. It also helped us to verify the correctness of the applied steps and to confirm if an applied step is useful or not thanks to .shape functionality that allow us to see if a filter for example worked well or not.
+
+The 'Staging_notebook' has all the applied steps with all the prints we used to realize which transformations to make to each of our datasets. 
 
 We start by transforming the documents into DataFrame to manipulate them more easily. Then the data underwent several transformations in order to become usable.
+The steps we followed were to, firstly, apply all the changes detailed below for each dataset and then merge them all into one pandas dataframe inner joining the by hackathon and participant id, ensuring correctness of our analysis.
 
 ![Staging Dag](/img/staging_dag.PNG)
 
 ### A. Removing duplicates
 With the describe() function, we can see how many rows the DataFrame has and how many values are unique for each column in it. Identifiers where the columns we used to deleted the duplicates.
 ### B. Deleting the unuseful columns
-We will then delete the columns that contain information that will not be useful in our analysis with the drop() function.
+We will then delete the columns that contain information that will not be useful in our analysis with the drop() function. The decisions we make in this step are based on the analysis we already know we are going to make because we have our queries already. But also we drop some columns that have the majority of its values null and their content is not so relevant to our analysis.
 ### C. Null/empty management
-There are many null values in the data we are retrieving. We keep the rows with a null on non-essential columns to the correctness of our data.
+There are many null values in the data we are retrieving. We keep the rows with a null value on non-essential columns to the correctness of our data. For example, if the hackathon-id is null we have to delete the row, but if the hackathon-description is null we can keep the row.
+An other thing we did was to complete some null values. In the case of the hackathon location, we had 2 columns with information about the location: 'hackathon-location-address' and 'hackathon-location-google-maps'. Both columns worked well for our analysis so what we did was to fill their nulls with each other values and if there were both nulls we dropped the row.
 ### D. Split columns
-We have a column with a full adress (Street, city, Postal code, Country), we want in our case to study the country separately, so we splited the column to have that field separated thanks to pandas rsplit function.
+We have a column with a full adress (Street, city, Postal code, Country), we want in our case to study the country separately, so we splited the column to have that field separated thanks to pandas rsplit() function. We separated the full adress (which has comma separator) in the 4 fields we identified.
 ### E. Unpivot columns
-We had a column per participant in a team project. As we want to work with participants separately, we have to unpivot them. This change allow to be able to to join participants and projects afterwards.
+We had a column per participant in a team project. As we want to work with participants separately, we have to unpivot them. This change allow to be able to to join participants and projects afterwards. Before this change we have 6 different participants columns per project, now we have a single participant column and we create automatically 6 different rows pero project with the different participants thanks to the melt() function.
 
 ## 3. Production Data and answer to the questions
 We could not test the Production Dag because we had an Docker/Airflow issue where we could not see and execute dags in the last 36 hours before the project deadline.
 That is why we also include an .sql file that we tested and we know it works to create and populate all the tables described below. It is located in dags/sql folder.
 
-We stored our production data in a PostgreSQL Database with a Star Schema.
+We stored our production data in a PostgreSQL Database with a Star Schema, with 3 dimension tables and a fact table. In our case, and more focused in our analysis the fact table did not have columns for facts and it is only a table with all the dimensions identifiers.
 
 We took the csv file produced after the staging data and we imported it to PostgreSQL. With that imported table we could create the 3 dimensions we are going to use in our case:
 
