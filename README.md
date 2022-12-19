@@ -102,9 +102,15 @@ Which hackaton has the highest average skill level of the participants?
 
 ![Average skills](/img/skill_average.png)
 
+We can see that the hackathon with the highest average number of skills is the hackathon named '' with around 20. The rest of the hackathons in this capture have around 15 skills.
+
 Which are the top 10 states (in order) with the most participants in hackatons?
 
 ![Top 10 States](/img/top_10_states.png)
+
+We observe a huge difference between the US and all the other countries, showing they are the principal hackathon organizers. 
+
+Also we can see a dominance of North America with USA, Canada and Mexico in the top 4 of this ranking.
 
 
 ## 4. What can be improved
