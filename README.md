@@ -121,7 +121,7 @@ Also we can see a dominance of North America with USA, Canada and Mexico in the 
 
 ## 4. What can be improved
 
-We had some technical issues with Docker/Airflow (on the last 2 days airflow UI did not work for us and we could not resolve it) and lack of communication issues. 
+We had some technical issues with Docker/Airflow (on the last 2 days airflow UI did not work for us and we could not resolve it) and lack of communication issues during all the project implementation. 
 
 With more time we could improve the dimensions of our production data to be SCD type 2 or use a Graph Database for our Production.
 
