@@ -24,6 +24,10 @@ We will use 3 datasets containing information about: the [participants](https://
                
   - Which are the top 10 states (in order) with the most participants in hackatons? 
 
+## Problem we need to solve
+
+We have to answer to the questions we proposed. To do that we will need to extract and transform our data as it will be described below. Then we will need to store it in a Database and make the last changes in our data to be able to analyze it and create the visualizations to answer them. 
+
 To complete this data flow we will go through the following stages:
 
 ## Coordinate the different tasks
