@@ -102,7 +102,7 @@ Which hackaton has the highest average skill level of the participants?
 
 ![Average skills](/img/skill_average.png)
 
-We can see that the hackathon with the highest average number of skills is the hackathon named '' with around 20. The rest of the hackathons in this capture have around 15 skills.
+We can see that the hackathon with the highest average number of skills is the hackathon named 'Hackillinois 2018' of the US with around 20. The rest of the hackathons in this capture have around 15 skills.
 
 Which are the top 10 states (in order) with the most participants in hackatons?
 
@@ -117,5 +117,6 @@ Also we can see a dominance of North America with USA, Canada and Mexico in the 
 
 We had some technical issues with Docker/Airflow (on the last 2 days airflow UI did not work for us and we could not resolve it) and lack of communication issues. 
 
-With more time we could improve for example the dimensions of our production data to be SCD type 2.
+With more time we could improve the dimensions of our production data to be SCD type 2 or use a Graph Database for our Production.
+
 Also we could have written a better documentation, with more explanations of the decisions and the applied steps. 
